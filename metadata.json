@@ -1,0 +1,6 @@
+{
+  "name": "PatternGuru",
+  "description": "A clean, professional documentation reference for Creational, Structural, and Behavioral design patterns, complete with multi-language code snippets, interactive search, accessibility features, and keyboard shortcuts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
