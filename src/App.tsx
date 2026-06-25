@@ -6,6 +6,7 @@ import PatternCompareView from "./components/PatternCompareView";
 import SearchBar from "./components/SearchBar";
 import VoiceController from "./components/VoiceController";
 import KeyboardShortcutsModal from "./components/KeyboardShortcutsModal";
+import PatternKnowledgeQuizModal from "./components/PatternKnowledgeQuizModal";
 import { ThemeMode, KeyboardShortcut } from "./types";
 import { 
   Menu, Sun, Moon, Eye, Keyboard, Volume2, Sparkles, 
@@ -38,6 +39,7 @@ export default function App() {
   });
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [quizModalOpen, setQuizModalOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showFinishedToast, setShowFinishedToast] = useState(false);
@@ -251,6 +253,11 @@ export default function App() {
         e.preventDefault();
         setTheme((prev) => (prev === "light" ? "dark" : prev === "dark" ? "high-contrast" : "light"));
       } 
+      // Toggle Knowledge Quiz modal with 'q'
+      else if (key === "q") {
+        e.preventDefault();
+        setQuizModalOpen((prev) => !prev);
+      }
       // Cycle global language with 'l'
       else if (key === "l") {
         e.preventDefault();
@@ -281,6 +288,7 @@ export default function App() {
       // Close overlays with 'Escape'
       else if (e.key === "Escape") {
         setHelpModalOpen(false);
+        setQuizModalOpen(false);
         setMobileSidebarOpen(false);
       } 
       // Navigation: Next pattern with 'ArrowDown'
@@ -311,6 +319,7 @@ export default function App() {
 
   const shortcutsList: KeyboardShortcut[] = [
     { keys: ["Ctrl", "K"], description: "Activate fast pattern search", action: "Search focus" },
+    { keys: ["Q"], description: "Launch randomized Design Pattern Knowledge Quiz", action: "Toggle Quiz" },
     { keys: ["C"], description: "Toggle side-by-side design pattern comparison", action: "Toggle Compare" },
     { keys: ["ArrowDown"], description: "Navigate to next design pattern", action: "Next page" },
     { keys: ["ArrowUp"], description: "Navigate to previous design pattern", action: "Previous page" },
@@ -340,6 +349,7 @@ export default function App() {
         onClose={() => setMobileSidebarOpen(false)}
         theme={theme}
         onOpenHelp={() => setHelpModalOpen(true)}
+        onOpenQuiz={() => setQuizModalOpen(true)}
         favoriteIds={favoriteIds}
       />
 
@@ -537,6 +547,14 @@ export default function App() {
         onClose={() => setHelpModalOpen(false)}
         shortcuts={shortcutsList}
         theme={theme}
+      />
+
+      {/* Randomized Design Pattern Knowledge Quiz Modal Overlay */}
+      <PatternKnowledgeQuizModal
+        isOpen={quizModalOpen}
+        onClose={() => setQuizModalOpen(false)}
+        theme={theme}
+        allPatterns={designPatterns}
       />
 
       {/* Floating Scroll-to-Top Button */}

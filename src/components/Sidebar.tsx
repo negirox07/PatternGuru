@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layers, Box, HelpCircle, Laptop, Landmark, ShieldCheck, HelpCircle as HelpIcon, CheckSquare, Settings, Bookmark, Clock } from "lucide-react";
+import { Layers, Box, HelpCircle, Laptop, Landmark, ShieldCheck, HelpCircle as HelpIcon, CheckSquare, Settings, Bookmark, Clock, Award } from "lucide-react";
 import { DesignPattern, ThemeMode } from "../types";
 
 interface SidebarProps {
@@ -10,6 +10,7 @@ interface SidebarProps {
   onClose: () => void; // Close mobile drawer
   theme: ThemeMode;
   onOpenHelp: () => void;
+  onOpenQuiz: () => void;
   favoriteIds: string[];
 }
 
@@ -21,6 +22,7 @@ export default function Sidebar({
   onClose,
   theme,
   onOpenHelp,
+  onOpenQuiz,
   favoriteIds
 }: SidebarProps) {
   const isHighContrast = theme === "high-contrast";
@@ -315,6 +317,23 @@ export default function Sidebar({
           ? "border-white" 
           : "border-slate-100 dark:border-slate-900"
       }`}>
+        <button
+          onClick={() => {
+            onOpenQuiz();
+            onClose(); // Close mobile drawer if open
+          }}
+          className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            isHighContrast
+              ? "bg-black border border-white text-white hover:bg-zinc-900"
+              : theme === "dark"
+                ? "text-indigo-400 hover:text-indigo-300 bg-indigo-950/20 hover:bg-indigo-950/45 border border-indigo-900/40"
+                : "text-indigo-700 hover:text-indigo-800 bg-indigo-50/60 hover:bg-indigo-50/90 border border-indigo-100/50 shadow-sm"
+          }`}
+        >
+          <Award size={16} className={isHighContrast ? "text-white" : "text-indigo-500"} />
+          <span>Knowledge Quiz (Q)</span>
+        </button>
+
         <button
           onClick={onOpenHelp}
           className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
