@@ -6,11 +6,13 @@ import {
   CheckCircle, ArrowRight, CornerDownRight, FileCode2,
   ChevronRight, Sparkles, MessageSquareWarning, Code2,
   Box, Layers, Landmark, Clock, Eye, FileText, Bookmark, StickyNote,
-  Sliders
+  Sliders, Printer
 } from "lucide-react";
 import SyntaxHighlighter from "./SyntaxHighlighter";
 import PatternQuizView from "./PatternQuizView";
+import AdSenseUnit from "./AdSenseUnit";
 import { patternQuizzes } from "../data/quizzes";
+import { getAverageRating } from "../utils/ratings";
 
 
 interface PatternViewProps {
@@ -22,6 +24,8 @@ interface PatternViewProps {
   setGlobalLanguage: (lang: string) => void;
   favoriteIds: string[];
   onToggleFavorite: (patternId: string) => void;
+  userRating: number;
+  onRatePattern: (patternId: string, rating: number) => void;
 }
 
 const fontSizeClasses: Record<string, string> = {
@@ -45,7 +49,9 @@ export default function PatternView({
   globalLanguage, 
   setGlobalLanguage,
   favoriteIds,
-  onToggleFavorite
+  onToggleFavorite,
+  userRating,
+  onRatePattern
 }: PatternViewProps) {
   const [activeLang, setActiveLang] = useState<string>("");
   const [copied, setCopied] = useState<boolean>(false);
@@ -97,21 +103,29 @@ export default function PatternView({
   const saveTimeoutRef = useRef<number | null>(null);
   const [relatedFilter, setRelatedFilter] = useState<'all' | 'category' | 'complexity'>('all');
 
-  // Load note when pattern changes (from IndexedDB)
+  // Load note when pattern changes (from localStorage & IndexedDB migration fallback)
   useEffect(() => {
     // Clear any pending saves
     if (saveTimeoutRef.current) {
       window.clearTimeout(saveTimeoutRef.current);
     }
     
-    getNote(pattern.id)
-      .then((savedNote) => {
-        setNote(savedNote);
-      })
-      .catch((e) => {
-        console.error("Failed to load note from IndexedDB:", e);
-        setNote("");
-      });
+    const localSaved = localStorage.getItem(`design-patterns-note-${pattern.id}`);
+    if (localSaved !== null) {
+      setNote(localSaved);
+    } else {
+      getNote(pattern.id)
+        .then((savedNote) => {
+          setNote(savedNote);
+          if (savedNote) {
+            localStorage.setItem(`design-patterns-note-${pattern.id}`, savedNote);
+          }
+        })
+        .catch((e) => {
+          console.error("Failed to load note from IndexedDB:", e);
+          setNote("");
+        });
+    }
       
     setSaveStatus("idle");
     setRelatedFilter("all");
@@ -126,19 +140,24 @@ export default function PatternView({
     }
 
     saveTimeoutRef.current = window.setTimeout(() => {
-      saveNote(pattern.id, text)
-        .then(() => {
-          setSaveStatus("saved");
-          
-          // Return to idle state after showing "saved" status
-          setTimeout(() => {
-            setSaveStatus((current) => current === "saved" ? "idle" : current);
-          }, 1500);
-        })
-        .catch((e) => {
-          console.error("Failed to save note to IndexedDB:", e);
-          setSaveStatus("idle");
+      try {
+        localStorage.setItem(`design-patterns-note-${pattern.id}`, text);
+        
+        // Sync with IndexedDB as a backup
+        saveNote(pattern.id, text).catch((e) => {
+          console.error("Failed to sync note to IndexedDB:", e);
         });
+
+        setSaveStatus("saved");
+        
+        // Return to idle state after showing "saved" status
+        setTimeout(() => {
+          setSaveStatus((current) => current === "saved" ? "idle" : current);
+        }, 1500);
+      } catch (e) {
+        console.error("Failed to save note to localStorage:", e);
+        setSaveStatus("idle");
+      }
     }, 800);
   };
 
@@ -308,6 +327,24 @@ ${snippet.code}
             >
               <Bookmark size={14} className={isFavorited ? "fill-current text-white dark:text-white" : ""} />
               <span>{isFavorited ? "Bookmarked" : "Bookmark"}</span>
+            </button>
+
+            {/* Export PDF / Print button */}
+            <button
+              id="tour-print"
+              onClick={() => window.print()}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border print:hidden ${
+                isHighContrast
+                  ? "bg-black border-white text-white hover:bg-yellow-300 hover:text-black"
+                  : theme === "dark"
+                    ? "bg-slate-900 border-slate-800 text-slate-400 hover:text-indigo-400 hover:border-slate-700 hover:bg-slate-850"
+                    : "bg-slate-50 border-slate-100 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50/50"
+              }`}
+              title="Print Pattern or Export clean PDF documentation"
+              aria-label="Export PDF / Print Pattern"
+            >
+              <Printer size={14} className={isHighContrast ? "text-yellow-300" : "text-indigo-500 dark:text-indigo-400"} />
+              <span>PDF / Print</span>
             </button>
 
             {/* Reader Settings Menu */}
@@ -508,6 +545,74 @@ ${snippet.code}
             ))}
           </div>
         )}
+
+        {/* Pattern Rating Section */}
+        {(() => {
+          const ratingInfo = getAverageRating(pattern.id, userRating);
+          return (
+            <div className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5 ${
+              isHighContrast
+                ? "border-white bg-black text-white"
+                : theme === "dark"
+                  ? "bg-[#0F111A]/80 border-slate-900/80"
+                  : "bg-slate-50 border-slate-100"
+            }`}>
+              <div className="flex items-center gap-3.5 flex-wrap">
+                {/* Combined Community Rating */}
+                <div className="flex items-center gap-2 border-r border-slate-200 dark:border-slate-800 pr-4 shrink-0">
+                  <span className="text-lg font-black text-slate-850 dark:text-slate-100">
+                    {ratingInfo.average}
+                  </span>
+                  <div className="flex items-center text-amber-500 text-sm tracking-tighter">
+                    {"★".repeat(Math.round(ratingInfo.average))}
+                    {"☆".repeat(5 - Math.round(ratingInfo.average))}
+                  </div>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wider ml-1">
+                    ({ratingInfo.count} reviews)
+                  </span>
+                </div>
+
+                {/* User Interaction */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-450 dark:text-slate-400 font-bold uppercase tracking-wider">
+                    Your Rating:
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isFilled = userRating >= star;
+                      return (
+                        <button
+                          key={star}
+                          onClick={() => onRatePattern(pattern.id, star)}
+                          className={`transition-all duration-150 transform hover:scale-125 focus:outline-none ${
+                            isFilled
+                              ? "text-amber-500 hover:text-amber-400 text-xl cursor-pointer"
+                              : "text-slate-300 dark:text-slate-700 hover:text-amber-300 text-xl cursor-pointer"
+                          }`}
+                          title={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                        >
+                          ★
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {userRating > 0 && (
+                    <button
+                      onClick={() => onRatePattern(pattern.id, 0)}
+                      className="text-[10px] font-bold text-slate-450 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-450 ml-1 underline cursor-pointer transition-colors"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <span className="text-xs text-slate-400 dark:text-slate-500 font-medium italic sm:text-right shrink-0">
+                {userRating > 0 ? "Thank you for rating!" : "Click stars to cast your vote."}
+              </span>
+            </div>
+          );
+        })()}
         
         <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-3xl border-l-4 border-blue-500 pl-4 py-1">
           {pattern.tagline}
@@ -806,7 +911,7 @@ ${snippet.code}
       </section>
 
       {/* Personal Notes / Implementation thoughts */}
-      <section className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-900/60">
+      <section id="tour-notes" className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-900/60">
         <div className={`p-6 rounded-2xl border transition-all duration-300 ${
           isHighContrast
             ? "bg-black border-2 border-white text-white"
@@ -844,7 +949,7 @@ ${snippet.code}
               {saveStatus === "saved" && (
                 <span className="flex items-center gap-1 text-emerald-500 dark:text-emerald-400">
                   <Check size={14} />
-                  <span>Saved in IndexedDB</span>
+                  <span>Saved in localStorage</span>
                 </span>
               )}
               {saveStatus === "idle" && note && (
@@ -880,6 +985,14 @@ ${snippet.code}
           patternTitle={pattern.title} 
         />
       </section>
+
+      {/* Main Content Horizontal Banner Ad Unit */}
+      <AdSenseUnit
+        slot="7440931404"
+        className="mt-10"
+        style={{ display: "block" }}
+        format="auto"
+      />
         </>
       )}
 

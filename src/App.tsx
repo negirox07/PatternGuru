@@ -7,6 +7,7 @@ import SearchBar from "./components/SearchBar";
 import VoiceController from "./components/VoiceController";
 import KeyboardShortcutsModal from "./components/KeyboardShortcutsModal";
 import PatternKnowledgeQuizModal from "./components/PatternKnowledgeQuizModal";
+import TourGuide from "./components/TourGuide";
 import { ThemeMode, KeyboardShortcut } from "./types";
 import { 
   Menu, Sun, Moon, Eye, Keyboard, Volume2, Sparkles, 
@@ -19,6 +20,11 @@ import { getCookie, setCookie } from "./utils/cookies";
 export default function App() {
   const [activePatternId, setActivePatternId] = useState<string>(() => {
     try {
+      const hash = window.location.hash.replace("#", "");
+      const validIds = ["singleton", "factory-method", "builder", "adapter", "decorator", "facade", "observer", "strategy", "state"];
+      if (hash && validIds.includes(hash)) {
+        return hash;
+      }
       const saved = sessionStorage.getItem("design-patterns-active-pattern-id");
       return saved || "singleton";
     } catch {
@@ -40,6 +46,7 @@ export default function App() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [quizModalOpen, setQuizModalOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showFinishedToast, setShowFinishedToast] = useState(false);
@@ -61,10 +68,34 @@ export default function App() {
     }
   });
 
+  const [userRatings, setUserRatings] = useState<Record<string, number>>(() => {
+    try {
+      const saved = localStorage.getItem("design-patterns-user-ratings");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const handleRatePattern = (patternId: string, rating: number) => {
+    setUserRatings((prev) => {
+      const updated = { ...prev, [patternId]: rating };
+      if (rating === 0) {
+        delete updated[patternId];
+      }
+      try {
+        localStorage.setItem("design-patterns-user-ratings", JSON.stringify(updated));
+      } catch (e) {
+        console.error("Failed to save rating to localStorage", e);
+      }
+      return updated;
+    });
+  };
+
   const [visitCount, setVisitCount] = useState<number>(1);
   const [lastActivePatternCookie, setLastActivePatternCookie] = useState<string>("");
 
-  // Cookie Tracking on Mount
+  // Cookie Tracking and Tour Launch on Mount
   useEffect(() => {
     // 1. Visit counter cookie
     const visitsStr = getCookie("pattern-research-visits");
@@ -78,9 +109,18 @@ export default function App() {
     if (lastActive) {
       setLastActivePatternCookie(lastActive);
     }
+
+    // 3. Auto-trigger interactive tour guide for first time users
+    const tourCompleted = localStorage.getItem("design-patterns-tour-completed");
+    if (!tourCompleted) {
+      const timer = setTimeout(() => {
+        setTourOpen(true);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
-  // Update sessionStorage and Cookie when activePatternId changes
+  // Update sessionStorage, Cookie, URL hash, and dynamic SEO document title/description when activePatternId changes
   useEffect(() => {
     try {
       sessionStorage.setItem("design-patterns-active-pattern-id", activePatternId);
@@ -90,11 +130,40 @@ export default function App() {
         // Save to cookie (valid for 30 days)
         setCookie("last-active-pattern", pattern.title, 30);
         setLastActivePatternCookie(pattern.title);
+
+        // Sync URL Hash for deep-linking and SEO crawlers
+        if (window.location.hash !== `#${activePatternId}`) {
+          window.history.replaceState(null, "", `#${activePatternId}`);
+        }
+
+        // Dynamically update document title and meta description for SEO when Google indexes each pattern
+        document.title = `PatternGuru | ${pattern.title} Design Pattern Guide & Glossary`;
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) {
+          metaDesc.setAttribute("content", `${pattern.title} Design Pattern: ${pattern.tagline} Read problem description, structure diagram, tradeoffs, and executable code snippets in TypeScript, Java, and Python.`);
+        }
       }
     } catch (e) {
       console.error(e);
     }
   }, [activePatternId]);
+
+  // Listen for hashchange events for browser forward/back buttons and deep links
+  useEffect(() => {
+    const handleHashChange = () => {
+      try {
+        const hash = window.location.hash.replace("#", "");
+        const validIds = ["singleton", "factory-method", "builder", "adapter", "decorator", "facade", "observer", "strategy", "state"];
+        if (hash && validIds.includes(hash)) {
+          setActivePatternId(hash);
+        }
+      } catch (e) {
+        console.error("Error handling hash change:", e);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   // Update sessionStorage when isCompareMode changes
   useEffect(() => {
@@ -351,6 +420,7 @@ export default function App() {
         onOpenHelp={() => setHelpModalOpen(true)}
         onOpenQuiz={() => setQuizModalOpen(true)}
         favoriteIds={favoriteIds}
+        userRatings={userRatings}
       />
 
       {/* Main Content Pane */}
@@ -427,7 +497,7 @@ export default function App() {
           {/* Theme, Keyboard help quick controls */}
           <div className="flex items-center gap-1.5 md:gap-3">
             {/* Global Language Selector */}
-            <div className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all ${
+            <div id="tour-language" className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border transition-all ${
               isHighContrast
                 ? "bg-black border-white text-white"
                 : "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800/80 text-slate-700 dark:text-slate-300"
@@ -470,6 +540,7 @@ export default function App() {
 
             {/* Compare Patterns Button */}
             <button
+              id="tour-compare"
               onClick={() => setIsCompareMode((prev) => !prev)}
               className={`flex items-center gap-1.5 px-3 py-2.5 sm:px-3.5 sm:py-2.5 rounded-xl text-xs font-bold border transition-all ${
                 isCompareMode
@@ -487,6 +558,21 @@ export default function App() {
               <GitCompare size={14} className={isCompareMode ? "text-white" : "text-slate-500 dark:text-indigo-400"} />
               <span className="hidden sm:inline">{isCompareMode ? "Reader Mode" : "Compare"}</span>
               <span className="sm:hidden">{isCompareMode ? "Read" : "Comp"}</span>
+            </button>
+
+            {/* Interactive Tour Guide Button */}
+            <button
+              onClick={() => setTourOpen(true)}
+              className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold border transition-all ${
+                isHighContrast
+                  ? "bg-black border-white text-yellow-300 hover:bg-yellow-300 hover:text-black"
+                  : "bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-850 border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 hover:text-indigo-500 text-slate-700 dark:text-slate-300"
+              }`}
+              title="Start interactive app tour guide"
+              aria-label="Start interactive tour"
+            >
+              <Compass size={14} className="text-indigo-500 dark:text-indigo-400 animate-pulse" />
+              <span>Tour</span>
             </button>
 
             {/* Help Modals Button */}
@@ -526,6 +612,8 @@ export default function App() {
               setGlobalLanguage={setGlobalLanguage}
               favoriteIds={favoriteIds}
               onToggleFavorite={handleToggleFavorite}
+              userRating={userRatings[activePatternId] || 0}
+              onRatePattern={handleRatePattern}
             />
           )}
         </main>
@@ -555,6 +643,13 @@ export default function App() {
         onClose={() => setQuizModalOpen(false)}
         theme={theme}
         allPatterns={designPatterns}
+      />
+
+      {/* Interactive Step-by-Step Tour Guide Overlay */}
+      <TourGuide
+        isOpen={tourOpen}
+        onClose={() => setTourOpen(false)}
+        theme={theme}
       />
 
       {/* Floating Scroll-to-Top Button */}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Layers, Box, HelpCircle, Laptop, Landmark, ShieldCheck, HelpCircle as HelpIcon, CheckSquare, Settings, Bookmark, Clock, Award } from "lucide-react";
 import { DesignPattern, ThemeMode } from "../types";
+import AdSenseUnit from "./AdSenseUnit";
+import { getAverageRating } from "../utils/ratings";
 
 interface SidebarProps {
   patterns: DesignPattern[];
@@ -12,6 +14,7 @@ interface SidebarProps {
   onOpenHelp: () => void;
   onOpenQuiz: () => void;
   favoriteIds: string[];
+  userRatings: Record<string, number>;
 }
 
 export default function Sidebar({
@@ -23,7 +26,8 @@ export default function Sidebar({
   theme,
   onOpenHelp,
   onOpenQuiz,
-  favoriteIds
+  favoriteIds,
+  userRatings
 }: SidebarProps) {
   const isHighContrast = theme === "high-contrast";
 
@@ -139,6 +143,7 @@ export default function Sidebar({
             {favoritePatterns.length > 0 ? (
               favoritePatterns.map((item) => {
                 const isActive = item.id === activeId;
+                const ratingInfo = getAverageRating(item.id, userRatings[item.id]);
                 return (
                   <button
                     key={`fav-${item.id}`}
@@ -159,12 +164,21 @@ export default function Sidebar({
                     }`}
                     aria-current={isActive ? "page" : undefined}
                   >
-                    <span className="truncate">{item.title}</span>
-                    {!isActive && (
-                      <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                        isHighContrast ? "bg-yellow-300" : "bg-rose-500"
-                      }`} />
-                    )}
+                    <span className="truncate mr-1">{item.title}</span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-[11px] font-bold flex items-center gap-0.5 ${
+                        isActive
+                          ? isHighContrast ? "text-black" : "text-rose-100"
+                          : "text-amber-500 dark:text-amber-450"
+                      }`}>
+                        ★ {ratingInfo.average}
+                      </span>
+                      {!isActive && (
+                        <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                          isHighContrast ? "bg-yellow-300" : "bg-rose-500"
+                        }`} />
+                      )}
+                    </div>
                   </button>
                 );
               })
@@ -206,6 +220,7 @@ export default function Sidebar({
             {recentlyViewedPatterns.length > 0 ? (
               recentlyViewedPatterns.map((item) => {
                 const isActive = item.id === activeId;
+                const ratingInfo = getAverageRating(item.id, userRatings[item.id]);
                 return (
                   <button
                     key={`recent-${item.id}`}
@@ -226,12 +241,21 @@ export default function Sidebar({
                     }`}
                     aria-current={isActive ? "page" : undefined}
                   >
-                    <span className="truncate">{item.title}</span>
-                    {!isActive && (
-                      <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                        isHighContrast ? "bg-yellow-300" : "bg-indigo-500"
-                      }`} />
-                    )}
+                    <span className="truncate mr-1">{item.title}</span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-[11px] font-bold flex items-center gap-0.5 ${
+                        isActive
+                          ? isHighContrast ? "text-black" : "text-indigo-100"
+                          : "text-amber-500 dark:text-amber-450"
+                      }`}>
+                        ★ {ratingInfo.average}
+                      </span>
+                      {!isActive && (
+                        <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                          isHighContrast ? "bg-yellow-300" : "bg-indigo-500"
+                        }`} />
+                      )}
+                    </div>
                   </button>
                 );
               })
@@ -276,6 +300,7 @@ export default function Sidebar({
               <div className="flex flex-col gap-0.5">
                 {cat.items.map((item) => {
                   const isActive = item.id === activeId;
+                  const ratingInfo = getAverageRating(item.id, userRatings[item.id]);
                   return (
                     <button
                       key={item.id}
@@ -296,12 +321,21 @@ export default function Sidebar({
                       }`}
                       aria-current={isActive ? "page" : undefined}
                     >
-                      <span className="truncate">{item.title}</span>
-                      {!isActive && (
-                        <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                          isHighContrast ? "bg-yellow-300" : "bg-indigo-500"
-                        }`} />
-                      )}
+                      <span className="truncate mr-1">{item.title}</span>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`text-[11px] font-bold flex items-center gap-0.5 ${
+                          isActive
+                            ? isHighContrast ? "text-black" : "text-indigo-100"
+                            : "text-amber-500 dark:text-amber-450"
+                        }`}>
+                          ★ {ratingInfo.average}
+                        </span>
+                        {!isActive && (
+                          <span className={`w-1.5 h-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                            isHighContrast ? "bg-yellow-300" : "bg-indigo-500"
+                          }`} />
+                        )}
+                      </div>
                     </button>
                   );
                 })}
@@ -318,6 +352,7 @@ export default function Sidebar({
           : "border-slate-100 dark:border-slate-900"
       }`}>
         <button
+          id="tour-quiz-btn"
           onClick={() => {
             onOpenQuiz();
             onClose(); // Close mobile drawer if open
@@ -347,6 +382,14 @@ export default function Sidebar({
           <HelpIcon size={16} className="text-slate-500 dark:text-slate-400" />
           <span>Keyboard Guide (?)</span>
         </button>
+
+        {/* Sidebar Ad Unit */}
+        <AdSenseUnit
+          slot="5534129870"
+          className="mt-4 my-2 px-1"
+          style={{ display: "block" }}
+          format="fluid"
+        />
       </div>
     </div>
   );
@@ -355,6 +398,7 @@ export default function Sidebar({
     <>
       {/* Desktop Sidebar Panel */}
       <aside 
+        id="tour-sidebar"
         className={`hidden md:block w-72 h-screen border-r shrink-0 transition-colors ${
           isHighContrast
             ? "bg-black border-white text-white"

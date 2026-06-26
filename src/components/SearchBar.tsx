@@ -84,7 +84,7 @@ export default function SearchBar({ patterns, onSelectPattern, theme }: SearchBa
   const isHighContrast = theme === "high-contrast";
 
   return (
-    <div className="relative w-full max-w-lg font-sans">
+    <div id="tour-search" className="relative w-full max-w-lg font-sans">
       {/* Search Input Container */}
       <div 
         className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl border transition-all duration-200 ${

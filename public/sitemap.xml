@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Home Page / Dashboard -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Singleton Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#singleton</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Factory Method Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#factory-method</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Builder Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#builder</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Adapter Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#adapter</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Decorator Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#decorator</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Facade Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#facade</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Observer Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#observer</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Strategy Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#strategy</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- State Pattern -->
+  <url>
+    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#state</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

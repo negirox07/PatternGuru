@@ -1,0 +1,7 @@
+# https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+
+# Sitemap Location for Search Engines
+Sitemap: https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/sitemap.xml

@@ -191,7 +191,7 @@ export default function VoiceController({
   const isHighContrast = theme === "high-contrast";
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans">
+    <div id="tour-voice" className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans">
       {/* Toast Feedback */}
       {feedbackMsg && (
         <div 

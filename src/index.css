@@ -21,3 +21,81 @@
     animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 }
+
+/* Pristine PDF / Print Export Media Styling */
+@media print {
+  /* Hide non-essential layout wrappers and interactive features */
+  aside,
+  header,
+  #tour-sidebar,
+  #tour-voice,
+  #tour-notes,
+  .adsbygoogle,
+  span[class*="text-[10px] uppercase tracking-widest text-slate-450"],
+  .my-8.select-none.relative,
+  button,
+  a[href^="javascript:"],
+  .tour-overlay,
+  .keyboard-shortcuts-modal,
+  .quiz-modal,
+  .tour-guide,
+  #scroll-to-top,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Reset body and outer layout wrappers to allow multiple pages to print natively */
+  html,
+  body,
+  #root,
+  .min-h-screen,
+  .flex-1,
+  .overflow-y-auto,
+  .h-screen,
+  div[ref="scrollContainerRef"] {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    position: relative !important;
+    display: block !important;
+  }
+
+  /* Force print target to expand full width elegantly */
+  main,
+  article,
+  .max-w-4xl {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Avoid cutting headers or code chunks mid-page */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  pre,
+  code,
+  blockquote,
+  .rounded-2xl,
+  .p-6,
+  .border-l-4 {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Force standard elegant high-contrast print colors for ink conservation and legibility */
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Style syntax highlighted blocks cleanly for white-paper printing */
+  pre {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+}
