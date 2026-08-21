@@ -1,73 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Main Home Page / Dashboard -->
+  <!--
+    Only real, separately-addressable URLs belong here.
+    The pattern catalog is a single hash-routed page (/#singleton, /#builder, ...).
+    Search engines strip the #fragment, so listing those would submit the same
+    URL nine times, which reads as duplicate / thin content.
+  -->
   <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/</loc>
-    <lastmod>2026-06-25</lastmod>
+    <loc>https://patternguru.netlify.app/</loc>
+    <lastmod>2026-08-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  <!-- Singleton Pattern -->
   <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#singleton</loc>
-    <lastmod>2026-06-25</lastmod>
+    <loc>https://patternguru.netlify.app/about.html</loc>
+    <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.6</priority>
   </url>
-  <!-- Factory Method Pattern -->
   <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#factory-method</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://patternguru.netlify.app/privacy-policy.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
   </url>
-  <!-- Builder Pattern -->
   <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#builder</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://patternguru.netlify.app/terms.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
-  <!-- Adapter Pattern -->
   <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#adapter</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- Decorator Pattern -->
-  <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#decorator</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- Facade Pattern -->
-  <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#facade</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- Observer Pattern -->
-  <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#observer</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- Strategy Pattern -->
-  <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#strategy</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <!-- State Pattern -->
-  <url>
-    <loc>https://ais-pre-akeybisy6lxzzoycd356nh-820621543152.us-east1.run.app/#state</loc>
-    <lastmod>2026-06-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://patternguru.netlify.app/contact.html</loc>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>

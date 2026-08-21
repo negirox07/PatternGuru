@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Layers, Box, HelpCircle, Laptop, Landmark, ShieldCheck, HelpCircle as HelpIcon, CheckSquare, Settings, Bookmark, Clock, Award } from "lucide-react";
 import { DesignPattern, ThemeMode } from "../types";
 import AdSenseUnit from "./AdSenseUnit";
+import { AD_SLOTS } from "../adsConfig";
 import { getAverageRating } from "../utils/ratings";
 
 interface SidebarProps {
@@ -384,11 +385,13 @@ export default function Sidebar({
         </button>
 
         {/* Sidebar Ad Unit */}
+        {/* format="fluid" needs a data-ad-layout-key from AdSense to ever fill;
+            a plain responsive unit is the right fit for a fixed-width sidebar. */}
         <AdSenseUnit
-          slot="5534129870"
+          slot={AD_SLOTS.sidebar}
           className="mt-4 my-2 px-1"
           style={{ display: "block" }}
-          format="fluid"
+          format="auto"
         />
       </div>
     </div>

@@ -617,6 +617,39 @@ export default function App() {
             />
           )}
         </main>
+
+        {/* Site footer. AdSense review looks for a reachable privacy policy, and these
+            links are also the only internal links a crawler can follow out of the SPA. */}
+        <footer
+          className={`print:hidden border-t px-6 py-8 text-center text-xs ${
+            isHighContrast
+              ? "border-white text-yellow-300"
+              : "border-slate-100 dark:border-slate-900 text-slate-500 dark:text-slate-400"
+          }`}
+        >
+          <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-3">
+            <a href="/about.html" className="hover:underline">About</a>
+            <span aria-hidden="true" className="opacity-40">·</span>
+            <a href="/privacy-policy.html" className="hover:underline">Privacy Policy</a>
+            <span aria-hidden="true" className="opacity-40">·</span>
+            <a href="/terms.html" className="hover:underline">Terms of Use</a>
+            <span aria-hidden="true" className="opacity-40">·</span>
+            <a href="/contact.html" className="hover:underline">Contact</a>
+            <span aria-hidden="true" className="opacity-40">·</span>
+            <a
+              href="https://github.com/negirox07/PatternGuru"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline"
+            >
+              GitHub
+            </a>
+          </nav>
+          <p>
+            &copy; {new Date().getFullYear()} PatternGuru. Built by Mukesh Singh Negi. A free,
+            independent reference for Gang of Four design patterns.
+          </p>
+        </footer>
       </div>
 
       {/* Voice Commands control panel widget */}

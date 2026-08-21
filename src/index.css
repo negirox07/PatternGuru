@@ -22,17 +22,24 @@
   }
 }
 
+/* AdSense returns data-ad-status="unfilled" when it has no ad for the slot. Left alone
+   the <ins> keeps its reserved height and leaves a blank gap in the page. */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
 /* Pristine PDF / Print Export Media Styling */
 @media print {
   /* Hide non-essential layout wrappers and interactive features */
   aside,
   header,
+  footer,
   #tour-sidebar,
   #tour-voice,
   #tour-notes,
   .adsbygoogle,
-  span[class*="text-[10px] uppercase tracking-widest text-slate-450"],
   .my-8.select-none.relative,
+  .my-8.select-none,
   button,
   a[href^="javascript:"],
   .tour-overlay,
