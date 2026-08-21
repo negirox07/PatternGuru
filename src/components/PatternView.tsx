@@ -11,6 +11,7 @@ import {
 import SyntaxHighlighter from "./SyntaxHighlighter";
 import PatternQuizView from "./PatternQuizView";
 import AdSenseUnit from "./AdSenseUnit";
+import { AD_SLOTS } from "../adsConfig";
 import { patternQuizzes } from "../data/quizzes";
 import { getAverageRating } from "../utils/ratings";
 
@@ -986,12 +987,15 @@ ${snippet.code}
         />
       </section>
 
-      {/* Main Content Horizontal Banner Ad Unit */}
+      {/* Main Content In-Article Ad Unit — this format is meant to sit inline in a
+          reading column, which is exactly this spot (below the quiz, before Related
+          Patterns), so it uses fluid + in-article layout rather than a plain banner. */}
       <AdSenseUnit
-        slot="7440931404"
+        slot={AD_SLOTS.patternBanner}
         className="mt-10"
-        style={{ display: "block" }}
-        format="auto"
+        style={{ display: "block", textAlign: "center" }}
+        format="fluid"
+        layout="in-article"
       />
         </>
       )}
@@ -1201,6 +1205,16 @@ ${snippet.code}
           );
         })()}
       </section>
+
+      {/* Multiplex Native Content Ad Unit — sits after Related Patterns rather than
+          inside it, so it reads as a separate "more to explore" shelf and never gets
+          confused with the real related-pattern recommendations above it. */}
+      <AdSenseUnit
+        slot={AD_SLOTS.multiplex}
+        className="mt-10"
+        style={{ display: "block" }}
+        format="autorelaxed"
+      />
     </article>
   );
 }
